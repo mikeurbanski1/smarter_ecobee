@@ -1,0 +1,8 @@
+logs
+original_tokens
+api_key.txt
+code.txt
+token.json
+.idea
+__pycache__
+venv
