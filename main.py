@@ -92,11 +92,14 @@ def read_token():
 
 def read_last_hold():
     global last_hold
-    with open('last_hold.json', 'r') as fp:
-        last_hold = json.load(fp)
+    if os.path.exists('last_hold.json'):
+        with open('last_hold.json', 'r') as fp:
+            last_hold = json.load(fp)
 
-    if 'time' in last_hold:
-        last_hold['time'] = datetime.datetime.strptime(last_hold['time'], '%Y-%m-%d %H:%M:%S')
+        if 'time' in last_hold:
+            last_hold['time'] = datetime.datetime.strptime(last_hold['time'], '%Y-%m-%d %H:%M:%S')
+    else:
+        return {}
 
 
 def write_last_hold():
