@@ -29,6 +29,7 @@ It's perfect for a raspberry pi or similar device. I have mine running on my Pi-
 The app also contains the basic calls to authorize the app and obtain access tokens, available via the commands.
 
 `python main.py -h`
+
 `python main.py COMMAND -h`
 
 Example flow:
