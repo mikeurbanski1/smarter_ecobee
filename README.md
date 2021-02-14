@@ -24,4 +24,17 @@ If there is not a hold:
 1. Check occupancy. If not occupied, then return (there is nothing to do).
 2. Set a temperature hold until the next Thermostat scheduled transition.
 
+It's perfect for a raspberry pi or similar device. I have mine running on my Pi-Hole.
 
+The app also contains the basic calls to authorize the app and obtain access tokens, available via the commands.
+
+`python main.py -h`
+`python main.py COMMAND -h`
+
+Example flow:
+
+`python main.py pin --api-key APP_API_KEY` - obtain a PIN to install the app for your device, and print out an auth code that can be exchanged for access tokens.
+
+`python main.py token --auth-code AUTH_CODE` - use the auth code from the previous step to obtain access tokens.
+
+`python main.py run --valid-modes MODE_1,MODE_2 --sensors SENSOR_1,SENSOR_2` - run the program.
