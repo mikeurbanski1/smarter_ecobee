@@ -59,7 +59,7 @@ def run(args):
     sensors_to_check = [s.strip() for s in args.sensors.split(',')]
     dry_run = args.dry_run
 
-    for arg, val in args.__dict__:
+    for arg, val in args.__dict__.items():
         logger.info(f'arg: {val}')
 
     api_key = get_api_key()
