@@ -36,6 +36,12 @@ class DateTimeEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
+def get_api_key():
+    with open('api_key.txt', 'r') as fp:
+        api_key = fp.read().strip()
+    return api_key
+
+
 def run(args):
 
     log_stdout = args.log_stdout
@@ -58,8 +64,7 @@ def run(args):
     logger.info(f'modes_to_check: {modes_to_check}')
     logger.info(f'sensors_to_check: {sensors_to_check}')
 
-    with open('api_key.txt', 'r') as fp:
-        api_key = fp.read().strip()
+    api_key = get_api_key()
     logger.info(f'Read API key: {api_key}')
 
     read_last_hold()
@@ -399,6 +404,13 @@ def get_token(args):
         fp.write(dumps(token, indent=2))
 
 
+def status(args):
+    api_key = get_api_key()
+    read_token()
+    thermostat = get_thermostat(api_key)
+    print(json.dumps(thermostat, indent=2))
+
+
 def get_pin(args):
     api_key = args.api_key
     params = {
@@ -441,6 +453,9 @@ if __name__ == '__main__':
     run_parser.add_argument('--sensors', required=True,
                             help='A comma-separated list of sensors to check for occupancy - this should be the room(s) that dictate whether the adjusted setting will be used.')
     run_parser.set_defaults(func=run)
+
+    status_parser = subparsers.add_parser('status', help='Get the thermostat status and return. Prints to stdout.')
+    status_parser.set_defaults(func=status)
 
     args = parser.parse_args()
     args.func(args)
