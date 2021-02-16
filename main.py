@@ -57,12 +57,10 @@ def run(args):
     sleep_duration = args.sleep_duration
     modes_to_check = [m.strip() for m in args.valid_modes.split(',')]
     sensors_to_check = [s.strip() for s in args.sensors.split(',')]
+    dry_run = args.dry_run
 
-    logger.info(f'log_stdout: {log_stdout}')
-    logger.info(f'heat: {heat}')
-    logger.info(f'sleep_duration: {sleep_duration}')
-    logger.info(f'modes_to_check: {modes_to_check}')
-    logger.info(f'sensors_to_check: {sensors_to_check}')
+    for arg, val in args.__dict__:
+        logger.info(f'arg: {val}')
 
     api_key = get_api_key()
     logger.info(f'Read API key: {api_key}')
@@ -82,7 +80,7 @@ def run(args):
         if thermostat:
             logger.info('Thermostat:')
             logger.info(dumps(thermostat, indent=2))
-            check_setting(thermostat, heat, modes_to_check, sensors_to_check)
+            check_setting(thermostat, heat, modes_to_check, sensors_to_check, dry_run)
 
         logger.info(f'Sleeping for {sleep_duration} minutes')
         time.sleep(sleep_duration * 60)
@@ -112,7 +110,7 @@ def write_last_hold():
         fp.write(dumps(last_hold, indent=2))
 
 
-def check_setting(thermostat, heat_setting, modes_to_check, sensors_to_check):
+def check_setting(thermostat, heat_setting, modes_to_check, sensors_to_check, dry_run):
     """The flow is:
 
     1. Check that the current mode is in the list
@@ -156,8 +154,11 @@ def check_setting(thermostat, heat_setting, modes_to_check, sensors_to_check):
             logger.info('Sensor is occupied; returning without removing the hold')
             return
 
-        logger.info('Removing hold')
-        remove_hold()
+        if not dry_run:
+            logger.info('Removing hold')
+            remove_hold()
+        else:
+            logger.info('--dry-run was set, so not actually removing the hold')
     else:
         logger.info('No current hold found')
 
@@ -165,8 +166,11 @@ def check_setting(thermostat, heat_setting, modes_to_check, sensors_to_check):
             logger.info('Sensor is not occupied; returning without setting a hold')
             return
 
-        logger.info('Setting hold')
-        set_hold(heat_setting, thermostat['runtime']['desiredCool'])
+        if not dry_run:
+            logger.info('Setting hold')
+            set_hold(heat_setting, thermostat['runtime']['desiredCool'])
+        else:
+            logger.info('--dry-run was set, so not actually setting the hold')
 
 
 def check_occupancy(thermostat, sensors_to_check):
@@ -452,6 +456,8 @@ if __name__ == '__main__':
                             help='A comma-separated list of thermostat comfort settings to process; if the current comfort setting is not one of these, then the program will not do anything.')
     run_parser.add_argument('--sensors', required=True,
                             help='A comma-separated list of sensors to check for occupancy - this should be the room(s) that dictate whether the adjusted setting will be used.')
+    run_parser.add_argument('--dry-run', action='store_true',
+                            help='Do not actually change the mode, just log what would have happened.')
     run_parser.set_defaults(func=run)
 
     status_parser = subparsers.add_parser('status', help='Get the thermostat status and return. Prints to stdout.')
