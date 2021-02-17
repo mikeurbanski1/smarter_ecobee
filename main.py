@@ -60,7 +60,7 @@ def run(args):
     dry_run = args.dry_run
 
     for arg, val in args.__dict__.items():
-        logger.info(f'arg: {val}')
+        logger.info(f'{arg}: {val}')
 
     api_key = get_api_key()
     logger.info(f'Read API key: {api_key}')
@@ -85,6 +85,9 @@ def run(args):
 
         except Exception as e:
             logger.error('An error occurred getting or updating the thermostat. Continuing after next sleep', exc_info=True)
+
+        if dry_run:
+            return
 
         logger.info(f'Sleeping for {sleep_duration} minutes')
         time.sleep(sleep_duration * 60)
