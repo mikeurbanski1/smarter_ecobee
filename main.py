@@ -76,11 +76,15 @@ def run(args):
     while True:
         logger.info('Beginning iteration')
 
-        thermostat = get_thermostat(api_key)
-        if thermostat:
-            logger.info('Thermostat:')
-            logger.info(dumps(thermostat, indent=2))
-            check_setting(thermostat, heat, modes_to_check, sensors_to_check, dry_run)
+        try:
+            thermostat = get_thermostat(api_key)
+            if thermostat:
+                logger.info('Thermostat:')
+                logger.info(dumps(thermostat, indent=2))
+                check_setting(thermostat, heat, modes_to_check, sensors_to_check, dry_run)
+
+        except Exception as e:
+            logger.error('An error occurred getting or updating the thermostat. Continuing after next sleep', exc_info=True)
 
         logger.info(f'Sleeping for {sleep_duration} minutes')
         time.sleep(sleep_duration * 60)
