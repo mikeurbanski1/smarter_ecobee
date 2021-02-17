@@ -24,7 +24,7 @@ If there is not a hold:
 1. Check occupancy. If not occupied, then return (there is nothing to do).
 2. Set a temperature hold until the next Thermostat scheduled transition.
 
-It's perfect for a raspberry pi or similar device. I have mine running on my Pi-Hole.
+It's perfect for a raspberry pi or similar device. I have mine running on my Pi-Hole, so it's always on.
 
 The app also contains the basic calls to authorize the app and obtain access tokens, available via the commands.
 
@@ -38,4 +38,13 @@ Example flow:
 
 `python main.py token --auth-code AUTH_CODE` - use the auth code from the previous step to obtain access tokens.
 
-`python main.py run --valid-modes MODE_1,MODE_2 --sensors SENSOR_1,SENSOR_2` - run the program.
+`python main.py run --valid-modes MODE_1,MODE_2 --sensors SENSOR_1,SENSOR_2` - run the program. This will run it in the current CLI. To have it run indefinitely, even after logout, use:
+
+`nohup python main.py run --valid-modes MODE_1,MODE_2 --sensors SENSOR_1,SENSOR_2 &`
+
+# Setup
+
+Create a virtual environment. Then run `pip install -r requirements.txt`. 
+
+The only actual requirement is `requests`, so you can pretty easily use pipenv. I didn't, because I have trouble getting it set up on Windows. Why did I develop on Windows? Great question.
+
