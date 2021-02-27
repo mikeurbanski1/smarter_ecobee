@@ -138,7 +138,7 @@ def check_setting(thermostat, heat_setting, modes_to_check, sensors_to_check, dr
     logger.info(f"Is manual hold: {current_climate['isManualHold']}")
 
     if current_climate['name'] not in modes_to_check:
-        print(f'Current mode is {current_climate["name"]}, so there is nothing to do.')
+        logger.info(f'Current mode is {current_climate["name"]}, so there is nothing to do.')
         return
 
     occupied = check_occupancy(thermostat, sensors_to_check)
